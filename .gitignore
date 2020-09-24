@@ -1,5 +1,6 @@
 *.swp
 *.h5
+*.zip
 CatsDogs/PetImages/
 CatsDogs/TestImages/
 CatsDogs/modelv0/

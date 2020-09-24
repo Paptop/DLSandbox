@@ -1,5 +1,5 @@
 *.swp
 *.h5
-./CatsDogs/PetImages
-./CatsDogs/TestImages
-./CatsDogs/modelv0
+CatsDogs/PetImages/
+CatsDogs/TestImages/
+CatsDogs/modelv0/

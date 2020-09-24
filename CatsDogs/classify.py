@@ -13,15 +13,21 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
+#Prevent crash
 gpu = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpu[0], True)
 
 class Classifier:
 
     def __init__(self):
+        self.TRAIN_PATH = "Content/PetImages"
+        self.TEST_PATH = "Content/TestImages"
+        self.VERSION = "v0"
+        self.EXPORT_PATH = "Content/Export/" + self.VERSION + "/"
+
         self.image_size = (128, 128)
         self.batch_size = 32
-        self.epochs = 50 
+        self.epochs = 50
         self.gen_dataset()
         self.data_augmentation = keras.Sequential(
             [
@@ -30,15 +36,14 @@ class Classifier:
             ]
         )
         self.callbacks = [
-            keras.callbacks.ModelCheckpoint("save_at_{epoch}.h5")
+            keras.callbacks.ModelCheckpoint(self.EXPORT_PATH + "save_at_{epoch}.h5")
         ]
-
         self.model = self.make_model(self.image_size + (3,), 2)
         keras.utils.plot_model(self.model, show_shapes=True)
 
     def gen_dataset(self):
         self.train_ds = keras.preprocessing.image_dataset_from_directory(
-            "PetImages",
+            self.TRAIN_PATH,
             validation_split=0.2,
             subset="training",
             seed=1337,
@@ -46,7 +51,7 @@ class Classifier:
             batch_size=self.batch_size
         )
         self.val_ds = keras.preprocessing.image_dataset_from_directory(
-            "PetImages",
+            self.TRAIN_PATH,
             validation_split=0.2,
             subset="validation",
             seed=1337,
@@ -54,7 +59,7 @@ class Classifier:
             batch_size=self.batch_size
         )
         self.test_ds = keras.preprocessing.image_dataset_from_directory(
-            "TestImages",
+            self.TEST_PATH,
             image_size=self.image_size,
             batch_size=self.batch_size
         )
@@ -73,7 +78,7 @@ class Classifier:
         num_skipped = 0
 
         for folder_name in ("Cat", "Dog"):
-            folder_path = os.path.join("PetImages", folder_name)
+            folder_path = os.path.join(self.TRAIN_PATH, folder_name)
             for fname in os.listdir(folder_path):
                 fpath = os.path.join(folder_path, fname)
 
@@ -163,7 +168,7 @@ class Classifier:
 
 
     def serialize(self):
-        self.model.save("modelv0")
+        self.model.save(self.EXPORT_PATH + "modelv0")
 
 def main():
     cl = Classifier()
